@@ -3,9 +3,18 @@ import swaggerUi from "swagger-ui-express";
 import swaggerJsdoc from "swagger-jsdoc";
 import { authMiddleware } from "./middleware";
 import routes from "./routes";
+import mongoose from "mongoose";
+import * as dotenv from "dotenv";
+
+dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3000;
+
+mongoose
+  .connect(process.env.MONGODB_URI || "")
+  .then(() => console.log("Connected to MongoDB"))
+  .catch((err) => console.error("Could not connect to MongoDB", err));
 
 // Swagger configuration
 const options = {
