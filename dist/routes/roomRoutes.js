@@ -7,7 +7,8 @@ const express_1 = __importDefault(require("express"));
 const roomController_1 = require("../controllers/roomController");
 const roomValidator_1 = require("../validators/roomValidator");
 const validateRequest_1 = require("../middleware/validateRequest");
-// import { protect, admin } from '../middleware/authMiddleware'; // Import auth middleware later
+const authMiddleware_1 = require("../middleware/authMiddleware"); // Import auth middleware
+const express_async_handler_1 = __importDefault(require("express-async-handler")); // Use library
 const router = express_1.default.Router();
 /**
  * @swagger
@@ -179,7 +180,7 @@ const router = express_1.default.Router();
  *       500:
  *         description: Server error
  */
-router.get("/", roomController_1.getRooms); // Query validation happens inside controller
+router.get("/", (0, express_async_handler_1.default)(roomController_1.getRooms)); // Wrapped with asyncHandler
 /**
  * @swagger
  * /rooms:
@@ -210,8 +211,10 @@ router.get("/", roomController_1.getRooms); // Query validation happens inside c
  *       500:
  *         description: Server error
  */
-// Add protect and admin middleware later: router.post('/', protect, admin, validateRequest(createRoomSchema), createRoom);
-router.post("/", (0, validateRequest_1.validateRequest)(roomValidator_1.createRoomSchema), roomController_1.createRoom);
+router.post("/", authMiddleware_1.protect, // Added protect
+authMiddleware_1.admin, // Added admin
+(0, validateRequest_1.validateRequest)(roomValidator_1.createRoomSchema), (0, express_async_handler_1.default)(roomController_1.createRoom) // Wrapped with asyncHandler
+);
 /**
  * @swagger
  * /rooms/{id}:
@@ -234,7 +237,7 @@ router.post("/", (0, validateRequest_1.validateRequest)(roomValidator_1.createRo
  *       500:
  *         description: Server error
  */
-router.get("/:id", roomController_1.getRoomById);
+router.get("/:id", (0, express_async_handler_1.default)(roomController_1.getRoomById)); // Wrapped with asyncHandler
 /**
  * @swagger
  * /rooms/{id}:
@@ -267,8 +270,10 @@ router.get("/:id", roomController_1.getRoomById);
  *       500:
  *         description: Server error
  */
-// Add protect and admin middleware later: router.put('/:id', protect, admin, validateRequest(updateRoomSchema), updateRoom);
-router.put("/:id", (0, validateRequest_1.validateRequest)(roomValidator_1.updateRoomSchema), roomController_1.updateRoom);
+router.put("/:id", authMiddleware_1.protect, // Added protect
+authMiddleware_1.admin, // Added admin
+(0, validateRequest_1.validateRequest)(roomValidator_1.updateRoomSchema), (0, express_async_handler_1.default)(roomController_1.updateRoom) // Wrapped with asyncHandler
+);
 /**
  * @swagger
  * /rooms/{id}:
@@ -302,8 +307,7 @@ router.put("/:id", (0, validateRequest_1.validateRequest)(roomValidator_1.update
  *       500:
  *         description: Server error
  */
-// Add protect and admin middleware later: router.delete('/:id', protect, admin, deleteRoom);
-router.delete("/:id", roomController_1.deleteRoom);
+router.delete("/:id", authMiddleware_1.protect, authMiddleware_1.admin, (0, express_async_handler_1.default)(roomController_1.deleteRoom)); // Added protect & admin, wrapped with asyncHandler
 exports.default = router;
 // Define Pagination schema globally if not already done in app.ts or another central place
 /**

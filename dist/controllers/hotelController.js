@@ -31,9 +31,9 @@ const createHotel = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
                 .status(400)
                 .json({ message: "Validation Error", details: error.errors });
         }
-        console.error("Error creating hotel:", error);
-        res.status(500).json({ message: "Server error creating hotel" });
-        // next(error); // Pass to a central error handler later
+        // console.error("Error creating hotel:", error); // Logging handled by central handler
+        // res.status(500).json({ message: "Server error creating hotel" });
+        next(error); // Pass to central error handler
     }
 });
 exports.createHotel = createHotel;
@@ -69,9 +69,9 @@ const getHotels = (req, res, next) => __awaiter(void 0, void 0, void 0, function
         });
     }
     catch (error) {
-        console.error("Error fetching hotels:", error);
-        res.status(500).json({ message: "Server error fetching hotels" });
-        // next(error);
+        // console.error("Error fetching hotels:", error);
+        // res.status(500).json({ message: "Server error fetching hotels" });
+        next(error);
     }
 });
 exports.getHotels = getHotels;
@@ -91,9 +91,9 @@ const getHotelById = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
         res.status(200).json(hotel);
     }
     catch (error) {
-        console.error("Error fetching hotel by ID:", error);
-        res.status(500).json({ message: "Server error fetching hotel" });
-        // next(error);
+        // console.error("Error fetching hotel by ID:", error);
+        // res.status(500).json({ message: "Server error fetching hotel" });
+        next(error);
     }
 });
 exports.getHotelById = getHotelById;
@@ -119,9 +119,9 @@ const updateHotel = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
                 .status(400)
                 .json({ message: "Validation Error", details: error.errors });
         }
-        console.error("Error updating hotel:", error);
-        res.status(500).json({ message: "Server error updating hotel" });
-        // next(error);
+        // console.error("Error updating hotel:", error);
+        // res.status(500).json({ message: "Server error updating hotel" });
+        next(error);
     }
 });
 exports.updateHotel = updateHotel;
@@ -139,17 +139,15 @@ const deleteHotel = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
             return res.status(404).json({ message: "Hotel not found" });
         }
         // Optionally, could also delete associated rooms, bookings, reviews here or via DB triggers/middleware
-        res
-            .status(200)
-            .json({
+        res.status(200).json({
             message: "Hotel deleted successfully",
             hotelId: deletedHotel._id,
         });
     }
     catch (error) {
-        console.error("Error deleting hotel:", error);
-        res.status(500).json({ message: "Server error deleting hotel" });
-        // next(error);
+        // console.error("Error deleting hotel:", error);
+        // res.status(500).json({ message: "Server error deleting hotel" });
+        next(error);
     }
 });
 exports.deleteHotel = deleteHotel;

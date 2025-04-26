@@ -7,6 +7,7 @@ const express_1 = __importDefault(require("express"));
 const authController_1 = require("../controllers/authController");
 const userValidator_1 = require("../validators/userValidator");
 const validateRequest_1 = require("../middleware/validateRequest");
+const express_async_handler_1 = __importDefault(require("express-async-handler")); // Use library
 const router = express_1.default.Router();
 /**
  * @swagger
@@ -103,7 +104,7 @@ const router = express_1.default.Router();
  *       500:
  *         description: Server error
  */
-router.post("/register", (0, validateRequest_1.validateRequest)(userValidator_1.registerUserSchema), authController_1.registerUser);
+router.post("/register", (0, validateRequest_1.validateRequest)(userValidator_1.registerUserSchema), (0, express_async_handler_1.default)(authController_1.registerUser)); // Wrapped with asyncHandler
 /**
  * @swagger
  * /auth/login:
@@ -128,5 +129,5 @@ router.post("/register", (0, validateRequest_1.validateRequest)(userValidator_1.
  *       500:
  *         description: Server error
  */
-router.post("/login", (0, validateRequest_1.validateRequest)(userValidator_1.loginUserSchema), authController_1.loginUser);
+router.post("/login", (0, validateRequest_1.validateRequest)(userValidator_1.loginUserSchema), (0, express_async_handler_1.default)(authController_1.loginUser)); // Wrapped with asyncHandler
 exports.default = router;
