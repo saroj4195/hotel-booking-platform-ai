@@ -39,10 +39,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
 const swagger_jsdoc_1 = __importDefault(require("swagger-jsdoc"));
-const middleware_1 = require("./middleware");
-const routes_1 = __importDefault(require("./routes"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const dotenv = __importStar(require("dotenv"));
+const cors_1 = __importDefault(require("cors"));
+// Import routes and middleware later as they are created
+const hotelRoutes_1 = __importDefault(require("./routes/hotelRoutes")); // Import hotel routes
+const roomRoutes_1 = __importDefault(require("./routes/roomRoutes")); // Import room routes
+const bookingRoutes_1 = __importDefault(require("./routes/bookingRoutes")); // Import booking routes
+const authRoutes_1 = __importDefault(require("./routes/authRoutes")); // Import auth routes
+const userRoutes_1 = __importDefault(require("./routes/userRoutes")); // Import user routes
+const reviewRoutes_1 = __importDefault(require("./routes/reviewRoutes")); // Import review routes
+const adminRoutes_1 = __importDefault(require("./routes/adminRoutes")); // Import admin routes
+// import { authMiddleware } from "./middleware/authMiddleware"; // Example path
+const errorHandler_1 = __importDefault(require("./middleware/errorHandler")); // Import error handler
 dotenv.config();
 const app = (0, express_1.default)();
 const port = process.env.PORT || 3000;
@@ -67,21 +76,42 @@ const options = {
                     bearerFormat: "JWT",
                 },
             },
-        },
+        }, // Removed extra closing brace here
+        servers: [
+            {
+                url: `http://localhost:${process.env.PORT || 3000}/api`,
+                description: "Development server",
+            },
+        ],
+        security: [
+            // Add security definition globally or per-route
+            {
+                bearerAuth: [],
+            },
+        ],
     },
-    apis: ["./src/routes.ts"], // Path to the API routes
+    apis: ["./src/routes/**/*.ts"], // Scan all .ts files in the routes directory
 };
 const specs = (0, swagger_jsdoc_1.default)(options);
 // Express middleware
+app.use((0, cors_1.default)()); // Enable CORS
 app.use(express_1.default.json());
-// JWT authentication middleware
-app.use(middleware_1.authMiddleware);
 // API routes
-app.use(routes_1.default);
-// Swagger UI
+app.use("/api/hotels", hotelRoutes_1.default); // Mount hotel routes
+app.use("/api/rooms", roomRoutes_1.default); // Mount room routes
+app.use("/api/bookings", bookingRoutes_1.default); // Mount booking routes
+app.use("/api/auth", authRoutes_1.default); // Mount auth routes
+app.use("/api/users", userRoutes_1.default); // Mount user routes
+app.use("/api/reviews", reviewRoutes_1.default); // Mount review routes
+app.use("/api/admin", adminRoutes_1.default); // Mount admin routes
+// Add other routes here later
+// Swagger UI - Serve at the root or a specific path like /api-docs
 app.use("/api-docs", swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(specs));
-app.get("/", (req, res) => {
-    res.send("Hello, world!");
+// Central Error Handler - Must be last middleware
+app.use(errorHandler_1.default);
+// Basic check route (optional)
+app.get("/health", (req, res) => {
+    res.status(200).send("OK");
 });
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
