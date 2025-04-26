@@ -1,0 +1,23 @@
+{
+  "name": "hotel-booking-platform-ai",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/saroj4195/hotel-booking-platform-ai.git",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/express": "^5.0.1",
+    "@types/jsonwebtoken": "^9.0.9",
+    "@types/swagger-jsdoc": "^6.0.4",
+    "@types/swagger-ui-express": "^4.1.8",
+    "typescript": "^5.8.3"
+  },
+  "scripts": {
+    "start": "node dist/app.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
+  }
+}
